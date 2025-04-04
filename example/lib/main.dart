@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       /// and optionally in profile mode, based on the [hideInProfileMode] flag.
       floatingActionButton: DfDebugWrapper(
         hideInProfileMode: true,
+        ignorePointerMode: IgnorePointerMode.profileMode,
         child: FloatingActionButton(
           onPressed: _incrementCounter,
           tooltip: 'Increment',

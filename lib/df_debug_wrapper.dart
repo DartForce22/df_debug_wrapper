@@ -7,6 +7,14 @@ import 'package:flutter/material.dart';
 ///
 /// This widget is useful for marking or debugging UI elements during development.
 /// In release mode, it does not render anything.
+///
+
+enum IgnorePointerMode {
+  all,
+  profileMode,
+  releaseMode,
+  none,
+}
 
 class DfDebugWrapper extends StatelessWidget {
   /// - [child] is the widget to wrap.
@@ -30,7 +38,7 @@ class DfDebugWrapper extends StatelessWidget {
     required this.child,
     this.bannerText = "Dummy",
     this.displayBanner = true,
-    this.ignorePointer = false,
+    this.ignorePointerMode = IgnorePointerMode.none,
     this.bannerBgColor,
     this.description,
     this.hideInProfileMode = false,
@@ -48,8 +56,8 @@ class DfDebugWrapper extends StatelessWidget {
   final bool displayBanner;
 
   /// Determines whether to ignore pointer events on the child widget.
-  /// If set to `true`, the child widget will not respond to pointer events.
-  final bool ignorePointer;
+  /// Defaults to `IgnorePointerMode.none`, which means pointer events are not ignored.
+  final IgnorePointerMode ignorePointerMode;
 
   /// Optional tooltip message to provide additional context.
   final String? description;
@@ -66,6 +74,20 @@ class DfDebugWrapper extends StatelessWidget {
   /// Defaults to `true`, which means the provided child widget is hidden in release mode.
   final bool hideInReleaseProfileMode;
 
+  /// Determines whether to ignore pointer events on the child widget.
+  bool get ignoringPointer {
+    switch (ignorePointerMode) {
+      case IgnorePointerMode.all:
+        return true;
+      case IgnorePointerMode.profileMode:
+        return kProfileMode;
+      case IgnorePointerMode.releaseMode:
+        return kReleaseMode;
+      case IgnorePointerMode.none:
+        return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (kReleaseMode && hideInReleaseProfileMode) {
@@ -77,7 +99,7 @@ class DfDebugWrapper extends StatelessWidget {
     }
 
     return IgnorePointer(
-      ignoring: ignorePointer,
+      ignoring: ignoringPointer,
       child: Stack(
         children: [
           child,
