@@ -10,9 +10,17 @@ import 'package:flutter/material.dart';
 ///
 
 enum IgnorePointerMode {
+  /// Ignore all pointer events on the child widget.
   all,
+
+  /// Ignore pointer events in profile and release mode.
   profileMode,
+
+  /// Ignore pointer events only in release mode.
   releaseMode,
+
+  ///Events are not ignored in any mode.
+  /// This is the default behavior.
   none,
 }
 
@@ -42,7 +50,7 @@ class DfDebugWrapper extends StatelessWidget {
     this.bannerBgColor,
     this.description,
     this.hideInProfileMode = false,
-    this.hideInReleaseProfileMode = true,
+    this.hideInReleaseMode = true,
   });
 
   /// The child widget to be wrapped and displayed.
@@ -72,7 +80,7 @@ class DfDebugWrapper extends StatelessWidget {
 
   /// Determines whether the provided child widget should be hidden in release mode.
   /// Defaults to `true`, which means the provided child widget is hidden in release mode.
-  final bool hideInReleaseProfileMode;
+  final bool hideInReleaseMode;
 
   /// Determines whether to ignore pointer events on the child widget.
   bool get ignoringPointer {
@@ -82,7 +90,7 @@ class DfDebugWrapper extends StatelessWidget {
       case IgnorePointerMode.profileMode:
         return kProfileMode;
       case IgnorePointerMode.releaseMode:
-        return kReleaseMode;
+        return kReleaseMode || kProfileMode;
       case IgnorePointerMode.none:
         return false;
     }
@@ -90,7 +98,7 @@ class DfDebugWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kReleaseMode && hideInReleaseProfileMode) {
+    if (kReleaseMode && hideInReleaseMode) {
       return const SizedBox();
     }
 
