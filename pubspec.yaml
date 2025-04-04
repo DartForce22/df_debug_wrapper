@@ -1,10 +1,10 @@
 name: df_debug_wrapper
 description: "Development tool that overlays a customizable banner on its child widget."
 
-version: 1.0.0
+version: 1.0.1
 
 homepage: https://dartforce.dev/
-repository: https://github.com/DartForce22/df_dropdown.git
+repository: https://github.com/DartForce22/df_debug_wrapper.git
 license: MIT
 
 environment:
