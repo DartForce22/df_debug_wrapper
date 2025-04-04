@@ -7,6 +7,14 @@ import 'package:flutter/material.dart';
 ///
 /// This widget is useful for marking or debugging UI elements during development.
 /// In release mode, it does not render anything.
+///
+
+enum IgnorePointerMode {
+  all,
+  profileMode,
+  releaseMode,
+  none,
+}
 
 class DfDebugWrapper extends StatelessWidget {
   /// - [child] is the widget to wrap.
@@ -15,6 +23,11 @@ class DfDebugWrapper extends StatelessWidget {
   /// - [description] is an optional tooltip message displayed when hovering or
   /// long-pressing on the banner.
   /// - [hideInProfileMode] determines whether to hide the banner in profile mode
+  /// (defaults to `true`).
+  /// - [hideInReleaseProfileMode] determines whether to hide the banner in release mode
+  /// (defaults to `true`).
+  /// /// - [displayBanner] determines whether to display the banner (defaults to `true`).
+  /// - [ignorePointer] determines whether to ignore pointer events on the child widget
   ///(defaults to `false`).
   ///---
   /// **Important**
@@ -24,9 +37,12 @@ class DfDebugWrapper extends StatelessWidget {
     super.key,
     required this.child,
     this.bannerText = "Dummy",
+    this.displayBanner = true,
+    this.ignorePointerMode = IgnorePointerMode.none,
     this.bannerBgColor,
     this.description,
     this.hideInProfileMode = false,
+    this.hideInReleaseProfileMode = true,
   });
 
   /// The child widget to be wrapped and displayed.
@@ -34,6 +50,14 @@ class DfDebugWrapper extends StatelessWidget {
 
   /// The text displayed on the banner.
   final String bannerText;
+
+  /// Determines whether the banner should be displayed.
+  /// Defaults to `true`, which means the banner is displayed.
+  final bool displayBanner;
+
+  /// Determines whether to ignore pointer events on the child widget.
+  /// Defaults to `IgnorePointerMode.none`, which means pointer events are not ignored.
+  final IgnorePointerMode ignorePointerMode;
 
   /// Optional tooltip message to provide additional context.
   final String? description;
@@ -46,9 +70,27 @@ class DfDebugWrapper extends StatelessWidget {
   /// Defaults to `true`, which means the banner is hidden in profile mode.
   final bool hideInProfileMode;
 
+  /// Determines whether the provided child widget should be hidden in release mode.
+  /// Defaults to `true`, which means the provided child widget is hidden in release mode.
+  final bool hideInReleaseProfileMode;
+
+  /// Determines whether to ignore pointer events on the child widget.
+  bool get ignoringPointer {
+    switch (ignorePointerMode) {
+      case IgnorePointerMode.all:
+        return true;
+      case IgnorePointerMode.profileMode:
+        return kProfileMode;
+      case IgnorePointerMode.releaseMode:
+        return kReleaseMode;
+      case IgnorePointerMode.none:
+        return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (kReleaseMode) {
+    if (kReleaseMode && hideInReleaseProfileMode) {
       return const SizedBox();
     }
 
@@ -56,41 +98,44 @@ class DfDebugWrapper extends StatelessWidget {
       return const SizedBox();
     }
 
-    return Stack(
-      children: [
-        child,
-        Positioned(
-          right: 0,
-          top: 0,
-          child: RotationTransition(
-            turns: AlwaysStoppedAnimation(15 / 360),
-            child: Tooltip(
-              message: description ?? bannerText,
-              child: Container(
-                width: 42,
-                decoration: BoxDecoration(
-                  color: bannerBgColor ??
-                      Colors.orange.withValues(
-                        alpha: 0.4,
-                      ),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: Text(
-                  bannerText,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.white,
+    return IgnorePointer(
+      ignoring: ignoringPointer,
+      child: Stack(
+        children: [
+          child,
+          Positioned(
+            right: 0,
+            top: 0,
+            child: RotationTransition(
+              turns: AlwaysStoppedAnimation(15 / 360),
+              child: Tooltip(
+                message: description ?? bannerText,
+                child: Container(
+                  width: 42,
+                  decoration: BoxDecoration(
+                    color: bannerBgColor ??
+                        Colors.orange.withValues(
+                          alpha: 0.4,
+                        ),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  textAlign: TextAlign.center,
+                  padding: const EdgeInsets.all(2),
+                  child: Text(
+                    displayBanner ? bannerText : "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }
