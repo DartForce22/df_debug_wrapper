@@ -111,37 +111,38 @@ class DfDebugWrapper extends StatelessWidget {
       child: Stack(
         children: [
           child,
-          Positioned(
-            right: 0,
-            top: 0,
-            child: RotationTransition(
-              turns: AlwaysStoppedAnimation(15 / 360),
-              child: Tooltip(
-                message: description ?? bannerText,
-                child: Container(
-                  width: 42,
-                  decoration: BoxDecoration(
-                    color: bannerBgColor ??
-                        Colors.orange.withValues(
-                          alpha: 0.4,
-                        ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  padding: const EdgeInsets.all(2),
-                  child: Text(
-                    displayBanner ? bannerText : "",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.white,
+          if (displayBanner)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: RotationTransition(
+                turns: AlwaysStoppedAnimation(15 / 360),
+                child: Tooltip(
+                  message: description ?? bannerText,
+                  child: Container(
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: bannerBgColor ??
+                          Colors.orange.withValues(
+                            alpha: 0.4,
+                          ),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    textAlign: TextAlign.center,
+                    padding: const EdgeInsets.all(2),
+                    child: Text(
+                      bannerText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );
