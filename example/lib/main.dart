@@ -65,10 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       ///The FloatingActionButton will be visible only in debug mode
-      /// and optionally in profile mode, based on the [hideInProfileMode] flag.
       floatingActionButton: DfDebugWrapper(
-        hideInProfileMode: true,
         ignorePointerMode: IgnorePointerMode.profileMode,
+        displayBanner: false,
         child: FloatingActionButton(
           onPressed: _incrementCounter,
           tooltip: 'Increment',
